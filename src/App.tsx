@@ -1,35 +1,23 @@
 import { useState, useRef, useEffect } from 'react';
 
-const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent';
-
-// ── GEMINI AI CALL ──
+// All AI features use the server endpoint; credentials stay in the function.
 const callAI = async (
   system: string,
   userContent: string,
   langLabel = 'English'
 ): Promise<string> => {
   try {
-    const fullPrompt = `IMPORTANT: You MUST reply only in ${langLabel} language. No other language allowed.\n\n${system}\n\nUser: ${userContent}`;
-    const res = await fetch(GEMINI_URL, {
+    const res = await fetch('/.netlify/functions/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: fullPrompt }] }],
-        generationConfig: { maxOutputTokens: 1000, temperature: 0.7 },
-      }),
+      body: JSON.stringify({ system, userContent, langLabel }),
     });
-    if (!res.ok) {
-      const err = await res.json();
-      console.error('Gemini error:', err);
-      return `⚠️ API Error: ${
-        err?.error?.message || 'Check your API key at aistudio.google.com'
-      }`;
-    }
     const data = await res.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    return text || '⚠️ No response from AI. Please try again.';
-  } catch (e) {
-    console.error(e);
+    if (!res.ok) {
+      return `⚠️ ${data.error || 'AI is temporarily unavailable. Please try again.'}`;
+    }
+    return data.text || '⚠️ No response from AI. Please try again.';
+  } catch {
     return '⚠️ Network error. Check internet connection.';
   }
 };
