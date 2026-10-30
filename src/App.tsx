@@ -1,9 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 
-// ══════════════════════════════════════
-// 🔑 PASTE YOUR FREE GEMINI KEY HERE
-// Get FREE at: aistudio.google.com
-const API_KEY = '';
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent';
 
 // ── GEMINI AI CALL ──
