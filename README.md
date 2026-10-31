@@ -71,3 +71,19 @@ export default defineConfig([
   },
 ])
 ```
+
+## AI chat on Netlify
+
+All AI features call the same-origin `/.netlify/functions/chat` endpoint.
+The function calls Gemini using the server-side `GEMINI_API_KEY` environment
+variable. Set it in the site's Netlify environment variables with Functions
+scope for the deploy contexts you use, then redeploy. Never add a `VITE_`
+prefix or put the key in source code.
+
+For local development, configure the key privately in an ignored `.env` file
+and run `netlify dev --port 8889`. Plain `npm run dev` runs only Vite and does
+not serve Netlify Functions.
+
+The shared endpoint preserves language instructions, conversation context, crop
+recommendations, market prices, and the app's other AI tools. Provider failures
+return safe messages without exposing credentials or upstream error details.
